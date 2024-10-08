@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gonzalogarahuetes/bookings-go/internal/config"
+	"github.com/gonzalogarahuetes/bookings-go/internal/forms"
 	"github.com/gonzalogarahuetes/bookings-go/internal/models"
 	"github.com/gonzalogarahuetes/bookings-go/internal/render"
 )
@@ -52,7 +53,14 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+// PostReservation handles the posting of a reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
