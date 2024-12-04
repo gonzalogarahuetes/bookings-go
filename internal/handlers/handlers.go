@@ -6,22 +6,27 @@ import (
 	"net/http"
 
 	"github.com/gonzalogarahuetes/bookings-go/internal/config"
+	"github.com/gonzalogarahuetes/bookings-go/internal/driver"
 	"github.com/gonzalogarahuetes/bookings-go/internal/forms"
 	"github.com/gonzalogarahuetes/bookings-go/internal/helpers"
 	"github.com/gonzalogarahuetes/bookings-go/internal/models"
 	"github.com/gonzalogarahuetes/bookings-go/internal/render"
+	"github.com/gonzalogarahuetes/bookings-go/internal/repository"
+	"github.com/gonzalogarahuetes/bookings-go/internal/repository/dbrepo"
 )
 
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 var Repo *Repository
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
