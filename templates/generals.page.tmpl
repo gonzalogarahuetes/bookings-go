@@ -73,7 +73,6 @@
             let formData = new FormData(form);
             formData.append("csrf_token", "{{.CSRFToken}}")
             formData.append("room_id", "1")
-            formData.append("csrf_token", "{{.CSRFToken}}")
 
             fetch("/search-availability-json", {
               method: 'post',
