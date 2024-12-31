@@ -317,9 +317,9 @@ func TestRepository_PostAvailability(t *testing.T) {
 	handler := http.HandlerFunc(Repo.PostAvailability)
 	handler.ServeHTTP(rr, req)
 
-	// if rr.Code != http.StatusOK {
-	// 	t.Errorf("PostAvailability handler returned wrong response status: got %d, expected %d", rr.Code, http.StatusOK)
-	// }
+	if rr.Code != http.StatusOK {
+		t.Errorf("PostAvailability handler returned wrong response status: got %d, expected %d", rr.Code, http.StatusOK)
+	}
 
 	// case start date invalid
 	reqBody = "start=invalid"
