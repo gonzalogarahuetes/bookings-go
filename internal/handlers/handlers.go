@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -147,6 +148,44 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		m.App.Session.Put(r.Context(), "error", "cannot insert room restriction.")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
+
+	// send email to the host
+	htmlMessage := fmt.Sprintf(`
+		<strong>Reservation Confirmation</strong><br>
+		Dear %s: <br>
+		This is to confirm your reservation from %s to %s.
+	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	msg := models.MailData{
+		To:       reservation.Email,
+		From:     "me@here.com",
+		Subject:  "Reservation confirmation",
+		Content:  htmlMessage,
+		Template: "basic.html",
+	}
+
+	m.App.MailChan <- msg
+
+	// send email to the property owner
+	htmlMessage = fmt.Sprintf(`
+		<strong>New Reservation</strong><br>
+		There is a new reservation in room with id %s. Here are the details:
+		<ul>
+			<li>Name: %s %s</li>
+			<li>Phone: %s</li>
+			<li>Email: %s</li>
+			<li>Dates: %s - %s</li>
+		</ul>
+	`, reservation.Room.RoomName, reservation.FirstName, reservation.LastName, reservation.Phone, reservation.Email, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	msg = models.MailData{
+		To:      "property@owner.com",
+		From:    "me@here.com",
+		Subject: "New Reservation",
+		Content: htmlMessage,
+	}
+
+	m.App.MailChan <- msg
 
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 
