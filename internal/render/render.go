@@ -8,13 +8,16 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/gonzalogarahuetes/bookings-go/internal/config"
 	"github.com/gonzalogarahuetes/bookings-go/internal/models"
 	"github.com/justinas/nosurf"
 )
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"humanDate": HumanDate,
+}
 
 var app *config.AppConfig
 var pathToTemplates = "./templates"
@@ -23,6 +26,13 @@ var pathToTemplates = "./templates"
 func NewRenderer(a *config.AppConfig) {
 	app = a
 }
+
+// returns time in yyyy-mm-dd format
+func HumanDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+// adds data for all templates
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
