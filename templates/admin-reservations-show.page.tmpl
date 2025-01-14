@@ -16,6 +16,8 @@
 
         <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="post" class="" novalidate>
             <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <input type="hidden" name="year" value="{{index .StringMap "year"}}">
+            <input type="hidden" name="month" value="{{index .StringMap "month"}}">
 
             <div class="form-group mt-5">
                 <label for="first_name">First name:</label>
@@ -55,8 +57,10 @@
                     {{else}}
                         <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
                     {{end}}
+                    {{if eq $res.Processed 0}}
                         <a href="#!" class="btn btn-info" onclick="processRes({{$res.ID}})">Mark as Processed</a>
-                </div>
+                    {{end}}
+                    </div>
                 <div>
                     <a href="#!" class="btn btn-danger" onclick="deleteRes({{$res.ID}})">Delete</a>
                 </div>
@@ -74,7 +78,7 @@
                 msg: 'Are you sure?',
                 callback: function(result) {
                     if(result !== false) {
-                        window.location.href = "/admin/process-reservation/{{$src}}/" + id
+                        window.location.href = "/admin/process-reservation/{{$src}}/" + id + '/do?y={{index.StringMap "year"}}&m={{index .StringMap "month"}}' 
                     }
                 }
             })
